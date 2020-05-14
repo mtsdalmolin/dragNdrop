@@ -74,10 +74,13 @@ export default function ReactDND() {
             cow.visibility = false;
           else
             cow.visibility = true;
+            
+          return cow;
         });
+        return draft;
       });
     }));
-  }, [filter]);
+  }, [filter, groups]);
 
   function moveCowCard(fromGroup, toGroup, fromCard, toCard) {
     setGroups(produce(groups, draft => {
