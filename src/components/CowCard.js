@@ -46,7 +46,7 @@ export default function CowCard({ cow, index, groupIndex }) {
         border: isDragging ? '1px dashed rgba(0, 0, 0, 0.2)' : '',
         background: isDragging ? 'transparent' : '',
         boxShadow: isDragging ? 'none' : '',
-        cursor: isDragging ? 'grabbing' : 'grab',
+        cursor: isDragging ? 'grabbing' : 'grab'
       }}
     >
       <span style={{opacity: isDragging ? '0' : ''}}>{cow.name}</span>

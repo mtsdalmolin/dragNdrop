@@ -7,14 +7,12 @@ export default function CowGroup({ group, index: groupIndex }) {
   const ref = useRef();
   const { groups, moveCowCard, moveCowGroup } = useContext(ReactDNDContext);
 
-  const [{ isDragging },dragRef] = useDrag({
+  const [{ isDragging }, dragRef] = useDrag({
     item: { type: 'COW-GROUP', groupIndex },
     collect: monitor => ({
       isDragging: monitor.isDragging(),
     })
   });
-
-  // TODO: usar isDragging para mostrar apenas a borda do container do rebanho (ajustar**)
 
   const [{ isOver }, dropRef] = useDrop({
     accept: ['COW-CARD', 'COW-GROUP'],
@@ -36,7 +34,17 @@ export default function CowGroup({ group, index: groupIndex }) {
     },
     collect: (monitor) => ({
       isOver: monitor.isOver()
-    })
+    }),
+    drop: (item, monitor) => {
+      // Iteração com o back?
+      let targetGroup = groups[item.groupIndex];
+      if (item.type === 'COW-CARD') {
+        let targetCow = groups[item.groupIndex].cows[item.index];
+        console.log(`Vaquinha ${targetCow.name}, id = ${targetCow.id}, moveu para o grupo ${targetGroup.name}, id = ${targetGroup.id}.\nAgora está na posição ${item.index} do ${targetGroup.name}`);
+      } else {
+        console.log(`Grupo ${targetGroup.name}, id = ${targetGroup.id}, agora está na posição ${item.groupIndex} da lista`);
+      }
+    }
   });
 
   dragRef(dropRef(ref));
@@ -48,19 +56,21 @@ export default function CowGroup({ group, index: groupIndex }) {
       ref={ref} 
       style={{ 
         backgroundColor: isDragging ? 'transparent' : (isOver ? '#E5E5E5' : ''),
-        border: isDragging ? '1px dashed rgba(0, 0, 0, 0.2)' : '',
-        boxShadow: isDragging ? 'none' : '',
         cursor: isDragging ? 'grabbing' : 'grab',
+        opacity: isDragging ? '0' : ''
       }}
     >
       <div className="group-top">
         <div className="group-title">{group.name}</div>
         <div style={{float: 'right'}}>{group.cows.length}</div>
       </div>
-      <div style={{display: 'flex', flexWrap: 'wrap'}}>
-          {group.cows.map((cow, index) => (
-            cow.visibility ? <CowCard key={cow.id} index={index} groupIndex={groupIndex} cow={cow} /> : ''
-          ))}
+      <div style={{
+        display: 'flex', 
+        flexWrap: 'wrap'
+      }}>
+        {group.cows.map((cow, index) => (
+          cow.visibility ? <CowCard key={cow.id} index={index} groupIndex={groupIndex} cow={cow} /> : ''
+        ))}
       </div>
     </div>
   );
